@@ -1,0 +1,12 @@
+body{
+  font-size:14px;
+}
+
+@media all and (max-width: 320px) {
+body{
+    font-size:10px
+}
+  
+.centered{
+  text-align:center;
+}

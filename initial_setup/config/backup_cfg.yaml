@@ -1,0 +1,27 @@
+dev: /media/backup
+dir: backups
+past_days: 1
+max_pull: 150000
+tables:
+    - ambient_table
+    - zwave_table
+    - inside_table
+    - mfi_table
+    - switch_table
+#min are daily min and daily max
+table_settings:
+    ambient_table:
+        min: 15000
+        max: 30000
+    zwave_table:
+        min: 15000
+        max: 30000
+    inside_table:
+        min: 15000
+        max: 30000
+    mfi_table:
+        min: 15000
+        max: 30000
+    switch_table:
+        min: 3000
+        max: 6000

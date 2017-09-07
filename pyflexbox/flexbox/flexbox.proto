@@ -1,0 +1,292 @@
+package tutorial;
+
+message heartbeat_message {
+  optional string hostname = 1;
+  optional int32 id = 2;
+
+  message inside_fridge {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional int32 temp1 = 3;
+    optional int32 temp2 = 4;
+    optional int32 temp3 = 5;
+    optional int32 temp4 = 6;
+    optional int32 temp5 = 7;
+  }
+
+  optional inside_fridge inside_temps = 3;
+
+    message outside_fridge {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional float temperature = 3;
+    optional float humidity = 4;
+  }
+
+  optional outside_fridge ambient = 4;
+
+  message door {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional bool open = 3;
+  }
+
+  optional door switch = 5;
+
+    message zwave {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional float houseAll_Voltage = 3;
+    optional float houseAll_Current = 4;
+    optional float houseAll_Energy = 5;
+    optional float houseAll_Power = 6;
+    optional float house1_Voltage = 7;
+    optional float house1_Current = 8;
+    optional float house1_Energy = 9;
+    optional float house1_Power = 10;
+    optional float house2_Voltage = 11;
+    optional float house2_Current = 12;
+    optional float house2_Energy = 13;
+    optional float house2_Power = 14;
+    
+  }
+
+  optional zwave house_power = 6;
+
+  message mfi {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional float v_rms1 = 3;
+    optional float i_rms1 = 4;
+    optional float active_pwr1 = 5;
+    optional float energy_sum1 = 6;
+    optional float pf1 = 7;
+    optional bool relay1 = 8;
+
+    optional float v_rms2 = 9;
+    optional float i_rms2 = 10;
+    optional float active_pwr2 = 11;
+    optional float energy_sum2 = 12;
+    optional float pf2 = 13;
+    optional bool relay2 = 14;
+    
+    optional float v_rms3 = 15;
+    optional float i_rms3 = 16;
+    optional float active_pwr3 = 17;
+    optional float energy_sum3 = 18;
+    optional float pf3 = 19;
+    optional bool relay3 = 20; 
+  }
+
+  optional mfi fridge_power = 7;
+
+  message demand_response_message {
+    optional int32 datetime = 1;
+    optional int32 local_date = 3;
+    optional int32 id = 2;
+    
+    optional int32 mfi_state = 4;
+    optional string control_source = 5;
+    optional string control_type = 6;
+    optional int32 limit_counter = 7;
+    optional float uptime_minutes = 8;
+  }
+  
+  optional demand_response_message demand_response = 8;
+
+}
+
+message demand_response_message {
+  optional string hostname = 1;
+  optional int32 id = 2;
+
+  enum MessageType {
+    AMBIENT = 0;
+    INSIDE_TEMPS = 1;
+    SWITCH = 2;
+    FRIDGE_POWER = 3;
+    HOUSE_POWER = 4;
+    DEMAND_RESPONSE = 5;
+  }
+
+  optional MessageType type = 3;
+
+  message demand_response_data {
+    optional int32 datetime = 1;
+    optional int32 local_date = 3;
+    optional int32 id = 2;
+    optional int32 mfi_state = 4;
+    optional string control_source = 5;
+    optional string control_type = 6;
+    optional int32 limit_counter = 7;
+    optional float uptime_minutes = 8;
+  }
+
+  repeated demand_response_data demand_response = 4;
+
+}
+
+message inside_temps_message {
+  optional string hostname = 1;
+  optional int32 id = 2;
+
+  enum MessageType {
+    AMBIENT = 0;
+    INSIDE_TEMPS = 1;
+    SWITCH = 2;
+    FRIDGE_POWER = 3;
+    HOUSE_POWER = 4;
+    DEMAND_RESPONSE = 5;
+  }
+
+  optional MessageType type = 3;
+
+  message inside_fridge {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional int32 temp1 = 3;
+    optional int32 temp2 = 4;
+    optional int32 temp3 = 5;
+    optional int32 temp4 = 6;
+    optional int32 temp5 = 7;
+  }
+
+  repeated inside_fridge inside_temps = 4;
+
+}
+
+message ambient_message{
+
+  optional string hostname = 1;
+  optional int32 id = 2;
+
+  enum MessageType {
+    AMBIENT = 0;
+    INSIDE_TEMPS = 1;
+    SWITCH = 2;
+    FRIDGE_POWER = 3;
+    HOUSE_POWER = 4;
+    DEMAND_RESPONSE = 5;
+  }
+
+  optional MessageType type = 3;
+
+  message outside_fridge {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional float temperature = 3;
+    optional float humidity = 4;
+  }
+
+  repeated outside_fridge ambient = 4;
+  
+}
+
+message switch_message{
+
+  optional string hostname = 1;
+  optional int32 id = 2;
+
+  enum MessageType {
+    AMBIENT = 0;
+    INSIDE_TEMPS = 1;
+    SWITCH = 2;
+    FRIDGE_POWER = 3;
+    HOUSE_POWER = 4;
+    DEMAND_RESPONSE = 5;
+  }
+
+  optional MessageType type = 3;
+
+  message door {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional bool open = 3;
+  }
+
+  repeated door switch = 4;
+  
+}
+
+message house_power_message{
+
+  optional string hostname = 1;
+  optional int32 id = 2;
+
+  enum MessageType {
+    AMBIENT = 0;
+    INSIDE_TEMPS = 1;
+    SWITCH = 2;
+    FRIDGE_POWER = 3;
+    HOUSE_POWER = 4;
+    DEMAND_RESPONSE = 5;
+  }
+
+  optional MessageType type = 3;
+
+  message zwave {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional float houseAll_Voltage = 3;
+    optional float houseAll_Current = 4;
+    optional float houseAll_Energy = 5;
+    optional float houseAll_Power = 6;
+    optional float house1_Voltage = 7;
+    optional float house1_Current = 8;
+    optional float house1_Energy = 9;
+    optional float house1_Power = 10;
+    optional float house2_Voltage = 11;
+    optional float house2_Current = 12;
+    optional float house2_Energy = 13;
+    optional float house2_Power = 14;
+    
+  }
+
+  repeated zwave house_power = 4;
+  
+}
+
+message fridge_power_message{
+
+  optional string hostname = 1;
+  optional int32 id = 2;
+
+  enum MessageType {
+    AMBIENT = 0;
+    INSIDE_TEMPS = 1;
+    SWITCH = 2;
+    FRIDGE_POWER = 3;
+    HOUSE_POWER = 4;
+    DEMAND_RESPONSE = 5;
+  }
+
+  optional MessageType type = 3;
+
+  message mfi {
+    optional int32 datetime = 1;
+    optional int32 id = 2;
+    optional float v_rms1 = 3;
+    optional float i_rms1 = 4;
+    optional float active_pwr1 = 5;
+    optional float energy_sum1 = 6;
+    optional float pf1 = 7;
+    optional bool relay1 = 8;
+
+    optional float v_rms2 = 9;
+    optional float i_rms2 = 10;
+    optional float active_pwr2 = 11;
+    optional float energy_sum2 = 12;
+    optional float pf2 = 13;
+    optional bool relay2 = 14;
+    
+    optional float v_rms3 = 15;
+    optional float i_rms3 = 16;
+    optional float active_pwr3 = 17;
+    optional float energy_sum3 = 18;
+    optional float pf3 = 19;
+    optional bool relay3 = 20; 
+  }
+
+  repeated mfi fridge_power = 4;
+  
+}

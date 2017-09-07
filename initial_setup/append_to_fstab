@@ -1,0 +1,2 @@
+#uid and gid are for pi and flexbox respectively
+/dev/sda1	/media/backup   vfat	rw,suid,dev,exec,auto,async,nofail,uid=1000,gid=1002   0   3
