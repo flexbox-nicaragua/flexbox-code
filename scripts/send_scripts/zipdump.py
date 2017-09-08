@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: ascii -*-
+# Copyright 2016 The Flexbox Authors. All rights reserved.
+# Licensed under the open source MIT License, which is in the LICENSE file.
 
 from flexbox import psql
 from datetime import datetime, timedelta

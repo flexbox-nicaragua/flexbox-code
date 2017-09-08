@@ -1,3 +1,5 @@
+# Copyright 2016 The Flexbox Authors. All rights reserved.
+# Licensed under the open source MIT License, which is in the LICENSE file.
 import openzwave
 from openzwave.network import ZWaveNetwork
 from openzwave.option import ZWaveOption

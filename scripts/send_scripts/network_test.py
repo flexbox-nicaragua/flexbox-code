@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
-
+# Copyright 2016 The Flexbox Authors. All rights reserved.
+# Licensed under the open source MIT License, which is in the LICENSE file.
 import ping
 import requests
 from xml.etree import ElementTree

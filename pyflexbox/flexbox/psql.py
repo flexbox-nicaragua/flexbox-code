@@ -1,3 +1,5 @@
+# Copyright 2016 The Flexbox Authors. All rights reserved.
+# Licensed under the open source MIT License, which is in the LICENSE file.
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Column, Table
 from sqlalchemy import Integer, String, DateTime, Boolean, Float, func

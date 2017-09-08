@@ -1,4 +1,6 @@
 #!/usr/bin/env python2
+# Copyright 2016 The Flexbox Authors. All rights reserved.
+# Licensed under the open source MIT License, which is in the LICENSE file.
 import os
 import yaml
 import json
@@ -42,17 +44,6 @@ def get_signal_from_dict(json_signal):
             control_type = 'peak_shaving'
             current_command = 1
             new_mfi_state = 1 - current_command
-    elif 'start_time' in json_signal['net_load_event']:
-        last_start_net_load = json_signal['net_load_event']['start_time']
-        last_duration_net_load = json_signal['net_load_event']['duration_minutes']
-        last_start_net_load_datetime = datetime.\
-                strptime(last_start_net_load,'%Y-%m-%d %H:%M:%S')
-        print 'Last Net Load Event Start:'+str(last_start_net_load_datetime)
-        print 'Last Net Load Event End:'+str(last_start_net_load_datetime+timedelta(minutes=int(last_duration_net_load)))
-        if datetime.now()<last_start_net_load_datetime+timedelta(minutes=int(last_duration_net_load)):
-            control_type = 'net_load'
-            current_command = 1
-            new_mfi_state = 1 - current_command
     else:
         current_command = 0
         control_type = 'none'
@@ -78,14 +69,6 @@ def get_signal_from_server():
         new_mfi_state = 1
         control_type = 'none'
 
-    '''
-    Testing
-    control_type = 'none'#'net_load'
-    new_mfi_state = 1#1
-    #current_command = 1-new_mfi_state
-    current_command = None#None#1
-    lost_connection_to_server = True #True
-    '''
     return lost_connection_to_server,current_command,new_mfi_state,control_type
 
 def dr_local_control(mfi_hostname,mfi_outlet):
@@ -131,8 +114,6 @@ def dr_local_control(mfi_hostname,mfi_outlet):
 
     if control_type == 'peak_shaving':
         upper_temp_plus = dr_properties['upper_temp_band_plus_peak_shaving']
-    elif control_type == 'net_load':
-        upper_temp_plus = dr_properties['upper_temp_band_plus_net_load']
     else:
         upper_temp_plus = 0
     #Previous command information
@@ -167,18 +148,10 @@ def dr_local_control(mfi_hostname,mfi_outlet):
         where(table_dict['demand_response'].c.control_source=='server').\
         order_by(table_dict['demand_response'].c.datetime.desc()).execute().fetchone()
 
-    last_row_net_load = table_dict['demand_response'].select().\
-        where(table_dict['demand_response'].c.mfi_state==0).\
-        where(table_dict['demand_response'].c.control_type=='net_load').\
-        where(table_dict['demand_response'].c.control_source=='server').\
-        order_by(table_dict['demand_response'].c.datetime.desc()).execute().fetchone()
+   
 
-    last_row_net_load_dict = {}
     last_row_peak_shaving_dict = {}
-    if last_row_net_load:
-        for i,column in enumerate(column_names):
-            last_row_net_load_dict[column] = last_row_net_load[i]
-
+    
     if last_row_peak_shaving:
         for i,column in enumerate(column_names):
             last_row_peak_shaving_dict[column] = last_row_peak_shaving[i]

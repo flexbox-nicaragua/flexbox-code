@@ -1,3 +1,5 @@
+# Copyright 2016 The Flexbox Authors. All rights reserved.
+# Licensed under the open source MIT License, which is in the LICENSE file.
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Column, Table
 from sqlalchemy import Integer, String, DateTime, Boolean, Float
@@ -134,7 +136,15 @@ def setup_tables(metadata):
                 Column('uptime_minutes', Float),
                 )
 
+    peak_shifting_dr_table = Table('peak_shifting_dr', metadata,
+                Column('datetime', DateTime,default=datetime.datetime.utcnow),
+                Column('date', DateTime, primary_key=True),
+                Column('hour_start', Integer, primary_key=True),
+                Column('signal', Integer),
+                Column('duration_minutes', Integer),
+                )
 
+    table_dict['peak_shifting_dr_table'] = peak_shifting_dr_table
     table_dict['inside_table'] = inside_table
     table_dict['switch_table'] = switch_table
     table_dict['ambient_table'] = ambient_table

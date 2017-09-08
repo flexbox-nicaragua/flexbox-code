@@ -1,4 +1,6 @@
 #!/usr/bin/env python2
+# Copyright 2016 The Flexbox Authors. All rights reserved.
+# Licensed under the open source MIT License, which is in the LICENSE file.
 from multiprocessing import Process
 import os,time
 from datetime import datetime
@@ -18,7 +20,6 @@ class myThread(Process):
         loop_wait = 0.2
         min_diff = 0.01
         heartbeat = 60
-        # mfi_IPs = ['10.10.10.101','10.10.10.100']
         mfi_IPs = ['10.10.10.101']
         good_ip = mfi_IPs[0]
         time1 = datetime.now()
