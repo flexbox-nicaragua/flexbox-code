@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!-- Copyright 2016 The Flexbox Authors. All rights reserved. -->
+<!-- Licensed under the open source MIT License, which is in the LICENSE file. -->
+<style>
+
+svg {
+  font: 10px sans-serif;
+}
+
+.line {
+  fill: none;
+  stroke: #000;
+  clip-path: url(#clip);
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+.dr_event {
+  stroke: none;
+  fill:steelblue;
+  fill-opacity: .25;
+}
+
+</style>
+<html>
+<body>
+  <select id="flexboxes"></select>
+  <select id="table">
+    <option value="inside_table">inside temps</option>
+    <option value="mfi_table">Fridge Power</option>
+    <option value="zwave_table">Total Power</option>
+    <option value="peak_shifting_dr_table">Peak Shifting Event</option>
+  </select><br>
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="js/d3.min.js"></script>
+<script>
+
+var data;
+
+var color = d3.scale.ordinal().range(["#48A36D",  "#56AE7C",  "#64B98C", "#72C39B", "#80CEAA", "#80CCB3", "#7FC9BD", "#7FC7C6", "#7EC4CF", "#7FBBCF", "#7FB1CF", "#80A8CE", "#809ECE", "#8897CE", "#8F90CD", "#9788CD", "#9E81CC", "#AA81C5", "#B681BE", "#C280B7", "#CE80B0", "#D3779F", "#D76D8F", "#DC647E", "#E05A6D", "#E16167", "#E26962", "#E2705C", "#E37756", "#E38457", "#E39158", "#E29D58", "#E2AA59", "#E0B15B", "#DFB95C", "#DDC05E", "#DBC75F", "#E3CF6D", "#EAD67C", "#F2DE8A"]);  
+
+var margin = {top: 10, right: 10, bottom: 100, left: 40},
+    margin2 = {top: 250, right: 10, bottom: 20, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = (500 - margin.top - margin.bottom)/2.0,
+    height2 = (500 - margin2.top - margin2.bottom)/6.0;
+
+//var parseDate = d3.time.format("%b %Y").parse;
+var parseDate = d3.time.format("%Y%m%d%H%M%S").parse;
+
+var x = d3.time.scale().range([0, width]),
+    x2 = d3.time.scale().range([0, width]),
+    y = d3.scale.linear().range([height, 0]),
+    y2 = d3.scale.linear().range([height2, 0]);
+
+var xAxis = d3.svg.axis().scale(x).orient("bottom"),
+    xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
+    yAxis = d3.svg.axis().scale(y).orient("left");
+
+var brush = d3.
+svg.brush()
+    .x(x2)
+    .on("brush", brushed);
+
+var drRect = d3.svg.area()
+    .x(function(d) { return x(parseDate(d.datetime)); })
+    .y0(height)
+    .y1(function(d) { return (d.value_to_plot == 1 ? 0 : height);});
+
+var drRect2 = d3.svg.area()
+    .x(function(d) { return x2(parseDate(d.datetime)); })
+    .y0(height2)
+    .y1(function(d) {return (d.value_to_plot == 1 ? 0 : height2); });
+
+
+var line = d3.svg.line()
+    //.interpolate("basis")
+    .x(function(d) { return x(parseDate(d.datetime)); })
+    //.y0(height)
+    .y(function(d) { return y(d.value_to_plot); });
+
+
+
+var line2 = d3.svg.line()
+    //.interpolate("basis")
+    .x(function(d) { return x2(parseDate(d.datetime)); })
+    //.y0(height2)
+    .y(function(d) { return y2(d.value_to_plot); });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+svg.append("defs").append("clipPath")
+    .attr("id", "clip")
+  .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+var focus = svg.append("g")
+    .attr("class", "focus")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var context = svg.append("g")
+    .attr("class", "context")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+
+$('#flexboxes').change(function(){
+  loadJsonData($('#flexboxes').val(),$('#table').val());
+})
+
+$('#table').change(function(){
+  loadJsonData($('#flexboxes').val(),$('#table').val());
+})
+
+function plotJsonEvents(eventData){
+    
+  focus.append("path")
+      .datum(eventData)
+      .attr("class", "dr_event")
+      .attr("d", drRect);
+
+  context.append("path")
+      .datum(eventData)
+      .attr("class", "dr_event")
+      .attr("d", drRect2);
+}
+
+function plotJsonData(data){
+  x.domain(d3.extent(data.map(function(d) { return parseDate(d.datetime); })));
+  y.domain([0, d3.max(data.map(function(d) { return d.value_to_plot; }))]);
+  x2.domain(x.domain());
+  y2.domain(y.domain());
+
+  focus.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line);
+
+  focus.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  focus.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+  context.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line2);
+  
+/*
+  focus.selectAll("dot")
+        .data(data)
+      .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", 3.5)
+        .attr("cx", function(d) { return x(parseDate(d.datetime)); })
+        .attr("cy", function(d) { return y(d.value_to_plot) });
+
+  context.selectAll("dot")
+        .data(data)
+      .enter().append("circle")
+        .attr("r", 3.5)
+        .attr("class", "dot")
+        .attr("cx", function(d) { return x2(parseDate(d.datetime)); })
+        .attr("cy", function(d) { return y2(d.value_to_plot) });*/
+
+  context.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height2 + ")")
+      .call(xAxis2);
+
+  context.append("g")
+      .attr("class", "x brush")
+      .call(brush)
+    .selectAll("rect")
+      .attr("y", -6)
+      .attr("height", height2 + 7);
+
+  loadJsonEvents();
+}
+
+
+function loadJsonData(flexbox,table){
+  d3.select("body").selectAll("path").remove();
+  d3.select("body").selectAll(".axis").remove();
+  d3.select("body").selectAll(".brush .extent").remove();
+  d3.select("body").selectAll("dot").remove();
+  d3.json("anyData?hostname="+flexbox+"&table="+table+"&d3=true&last_week=true", function(error, origData) {
+    if(!$.isEmptyObject(origData)){ 
+      plotJsonData(origData.result);
+    }
+  })
+}
+
+function loadJsonEvents(){
+  d3.json("anyData?table=peak_shifting_dr_table&d3=true", function(error, origData) {
+    newData = origData;
+    if(!$.isEmptyObject(origData)){ 
+      plotJsonEvents(origData.result);
+    }
+  })
+}
+
+
+
+function brushed() {
+  x.domain(brush.empty() ? x2.domain() : brush.extent());
+  focus.select(".line").attr("d", line);
+   focus.select(".dr_event").attr("d", drRect);
+  focus.select(".x.axis").call(xAxis);
+}
+
+for(var i=0;i<30;i++){
+    var div = document.createElement('option');
+    div.value = "flxbxD"+i;
+    div.innerHTML="flxbxD"+i;
+    document.getElementById("flexboxes").appendChild(div);
+}
+  
+loadJsonData('flxbxD18','inside_table');
+
+</script>
+</html>
